@@ -1,0 +1,1 @@
+pytools will be a spatter of random handy code tools for doing things. It will combine a handful of my other github repos, such as dirtree, pdfmerger.
