@@ -23,7 +23,7 @@ Now type
 pv
 ```
 
-Done. We have created a pyver repository and made a backup of all the files in our current directory. Anytime we need to make another backup, just repeat the last step.
+Done. We have created a pyver repository and made a backup of all the files in our current directory in an archive naming year-month-day-hour-minute-second. Anytime we need to make another backup, just repeat the last step.
 
 There are a few built in commands to interrogate the repository. The first is log, which shows the contents of a text file that keeps track of the commits that are made
 ```
@@ -40,4 +40,10 @@ We also have some flags we can use to customize our commits. This commit adds on
 
 ```
 pv -f file1.txt|file2.docx -c added-figures-to-docx-and-updated-text-with-numbers
+```
+
+
+I used pyinstaller to build my own windows executable
+```
+pyinstaller pyver.py --onefile
 ```

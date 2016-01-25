@@ -1,15 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-The simpliest version control program ever
-
-add files to the folder, save a revision, or checkout a revision
-
-archive naming year-month-day-hour-minute-second
-
-http://pythoncentral.io/how-to-recursively-copy-a-directory-folder-in-python/
-https://docs.python.org/3/library/shutil.html#shutil.ignore_patterns
-
-
+Version control so simple your mom can do it.
 """
 
 import os, shutil, datetime, sys, argparse
@@ -23,7 +14,10 @@ def pyver(user, archivefiles, comment):
     
     if not os.path.isdir('.pyver'):
         os.mkdir('.pyver')
-        make_hidden('.pyver')
+        try:
+            make_hidden('.pyver')
+        except:
+            print('failed to make .pyver hidden, which only works on windows')
         
     n = datetime.datetime.now()
     timestamp = datetime.datetime.strftime(n, '%Y%m%d%H%M%S')  
@@ -68,7 +62,7 @@ def make_hidden(hidedir):
         raise ctypes.WinError()
 
 def log():
-	'''shows the contents of the pyver log file'''
+    '''shows the contents of the pyver log file''' 
     if os.path.exists('.pyver\\pyver.log'):
         pyverlog = open('.pyver\\pyver.log','r')
         for k in pyverlog.readlines():
