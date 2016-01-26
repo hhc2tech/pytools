@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Version control so simple your mom can do it.
+Version control for dummies
 """
 
-import os, shutil, datetime, sys, argparse
+__author__ = 'Neal Gordon'
+__version__ = '0.1'
 
+import os, shutil, datetime, sys, argparse
 
 def pyver(user, archivefiles, comment):
     '''
@@ -21,7 +23,7 @@ def pyver(user, archivefiles, comment):
         
     n = datetime.datetime.now()
     timestamp = datetime.datetime.strftime(n, '%Y%m%d%H%M%S')  
-    archivepath = '.pyver\\'+timestamp  
+    archivepath = os.path.join('.pyver',timestamp)
     os.mkdir(archivepath)
 
 	### was used to copy an entire directory but was wasteful
@@ -30,7 +32,7 @@ def pyver(user, archivefiles, comment):
 
     for f in archivefiles:
         print(f)
-        shutil.copy(f , archivepath+'\\'+f)
+        shutil.copy(f , os.path.join(archivepath, f))
     
     archivesize = sum([os.path.getsize(s) for s in os.listdir(archivepath)])/1e3 # kb
     
@@ -38,9 +40,9 @@ def pyver(user, archivefiles, comment):
     #shutil.make_archive(archivepath,'zip', archivepath)
     #shutil.rmtree(archivepath)
 
-    archivefilesstr = ' '.join(archivefiles)
+    archivefilesstr = '|'.join(archivefiles)
     ''' writes what files were archived'''
-    pyverlog = open('.pyver\\pyver.log','a')
+    pyverlog = open(os.path.join('.pyver','pyver.log'),'a')
     pyverlog.write('%s , %s , %ikb , %s , %s\n' % (user,
                                            timestamp,
                                            archivesize,
@@ -63,8 +65,9 @@ def make_hidden(hidedir):
 
 def log():
     '''shows the contents of the pyver log file''' 
-    if os.path.exists('.pyver\\pyver.log'):
-        pyverlog = open('.pyver\\pyver.log','r')
+    
+    if os.path.exists(os.path.join('.pyver','pyver.log')):
+        pyverlog = open(os.path.join('.pyver','pyver.log'),'r')
         for k in pyverlog.readlines():
             print(k)
         pyverlog.close()
@@ -81,6 +84,14 @@ def tree(path,indent=' '):
             print('%s  ./%s ' % (indent,file ) )
             tree(fullpath,indent + '   |')
 
+def make_win_exe():
+    '''creates a windows exe file that allows the pyver program to be 
+        run without the windows interpreter
+    '''
+    os.system('pip install pyinstaller')
+    os.system('pyinstaller pyver.py --onefile')    
+    
+        
 if __name__=='__main__':
     '''
 	executed if module is not imported
@@ -98,12 +109,15 @@ if __name__=='__main__':
         parser.add_argument('-b', '--bar-value', default=3.14)
        
         p = argparse.ArgumentParser()
-        p.add_argument('-u', '--user', default = os.path.split(os.path.expanduser('~'))[-1], 
+        p.add_argument('-u', '--user', 
+                       default = os.path.split(os.path.expanduser('~'))[-1], 
                        help='user that made the pyver entry')
         p.add_argument('-f', '--files',
-                       help='add files separated by vertical line, example, file1.txt|file2.txt')
+                       help='''add files separated by vertical line with no  
+                               spaces, example, file1.txt|file2.txt''')
         p.add_argument('-c', '--comment', default = '', 
-                       help='add a comment as to what changed')
+                       help='''add a comment enclosed in double quotes 
+                               as to what changed.''')
         args = p.parse_args()
         
         if args.files:
