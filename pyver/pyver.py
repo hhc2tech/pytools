@@ -6,7 +6,7 @@ Version control for dummies
 __author__ = 'Neal Gordon'
 __version__ = '0.2'
 
-import os, shutil, datetime, sys, argparse
+import os, shutil, datetime, sys, argparse, glob
 
 def pyver(user, comment, archivefiles):
     '''
@@ -114,6 +114,31 @@ def all_files(rootDir = '.'):
                 files.append(fullpath)
     return files
 
+def clearFiles(filetypes = ['exe','spec']):
+    """ WARNING THIS WILL DELETE FILES SO USE CAREFULLY
+        clears the files"""
+    for fileext in filetypes:
+        for f in glob.glob(os.path.dirname('.')+'/*.'+fileext):
+            try:
+                os.remove(f)
+            except:
+                pass
+
+def clearFilesExcept(filetypes = ['py','txt','docx','xlsx']):
+    """WARNING THIS WILL DELETE FILES SO USE CAREFULLY
+        clears the files except filetypes"""
+    for f in glob.glob('*.'):
+        if os.path.splitext(f)[1] not in filetypes:
+            try:
+                os.remove(f)
+            except:
+                pass
+
+def add_path(add_folder = "C:\\Users\\ngordon\\test"):
+    '''temporarily adds path to the system PATH variable'''
+    import sys
+    sys.path.append(add_folder)
+
 if __name__=='__main__':
     '''
 	executed if module is not imported
@@ -135,10 +160,13 @@ if __name__=='__main__':
         p.add_argument('-c', '--comment', default = '', 
                        help='''add a comment enclosed in double quotes 
                                as to what changed.''')
+#        p.add_argument('-e', '--extension', default = '', 
+#                       help='''add an extension to keep all the files''')                               
         args = p.parse_args()
         
+
         if args.files:
-            #tempfiles = ' '.join(args.files)
+            # collect all files of a type
             tempfiles = args.files.split('|')
             args.files = []
             for t in tempfiles:
@@ -146,6 +174,12 @@ if __name__=='__main__':
                     print('%s not found, skipping' % t)
                 else:
                     args.files.append(t)
+                    
+#        elif args.extension:
+#            for e in args.extension:
+#                os.path.splitext(f)[1]
+#                args.files.append(glob.glob('*.'+e))     
+                
         else:
             #files = os.listdir(os.getcwd())  ## does not capture subdirectories
             args.files = all_files('.')
