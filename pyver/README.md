@@ -10,6 +10,7 @@ The movtiation behind this attempt at creating a version control method is to cr
 4) if you want to revert back to an older revision, grab files our of the dated .pyver directories and put them in your current directory
 
 ### Criteria for design
+* Simplicity is your friend, obscurity is your enemy
 * It is unacceptable to rename files to track versions. This accomplishes this by putting the files in different directories and keep your current file with the desired, persistent filename
 * Can be used over a network drive. Does not require a central server. 
 * Be OS agnostic (written in Python)
@@ -28,21 +29,17 @@ OK, lets add a bit more work upfront to save us some typing for years to come. I
 
 There are a few built in commands to interrogate the repository. The first is log, which shows the contents of a text file that keeps track of the commits that are made
 ```
-pv log
+pyver log
 Neal , 20160125210812 , 7kb ,  , pyver.py|README.md|pyver.bat
-
 Neal , 20160125210814 , 7kb ,  , pyver.py|README.md|pyver.bat
-
 Neal , 20160125210817 , 7kb ,  , pyver.py|README.md|pyver.bat
-
 Neal , 20160125210854 , 7kb , making a comment for this commit , pyver.py|README.md|pyver.bat
-
 Neal , 20160125210912 , 4kb , only adding one file , pyver.py
 ```
 
 The next is tree, which shows all the files in the repo.
 ```
-pv tree
+pyverv tree
 
 ./.pyver 
 |  ./20160125210812 
@@ -73,7 +70,7 @@ pv tree
 We also have some flags we can use to customize our commits. This commit adds only the files file1.txt and file2.docx and adds a comment. Note-none of the flag inputs can have spaces, so files are seperated by ```|``` and comments are written without spaces using ```-```
 
 ```
-pv -f file1.txt|file2.docx -c "making a comment for this commit"
+pyver -f "file1.txt|file2.docx" -c "making a comment for this commit"
 ```
 
 I used pyinstaller to build my own windows executable
