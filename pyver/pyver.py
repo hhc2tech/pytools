@@ -38,12 +38,18 @@ def pyver(user, comment, archivefiles):
     os.mkdir(archivepath)
     for f in archivefiles:
         if os.path.exists(os.path.dirname(os.path.join(archivepath, f))):
-            print(os.path.join(archivepath, f))
-            shutil.copy(f , os.path.join(archivepath, f))
+            try:
+                shutil.copy(f , os.path.join(archivepath, f))
+                print(os.path.join(archivepath, f))
+            except:
+                print('%s copy failed. Is it open?' % os.path.join(archivepath, f))
         else:
             os.makedirs(os.path.join(archivepath,os.path.dirname(f)))
-            print(os.path.join(archivepath, f))
-            shutil.copy(f , os.path.join(archivepath, f))            
+            try:
+                shutil.copy(f , os.path.join(archivepath, f))
+                print(os.path.join(archivepath, f))
+            except:
+                print('%s copy failed. Is it open?' % os.path.join(archivepath, f))
             #print('directory %s created' % os.path.join(archivepath,os.path.dirname(f)))
     archivesize = sum([os.path.getsize(s) for s in os.listdir(archivepath)])/1e3 # kb
     
