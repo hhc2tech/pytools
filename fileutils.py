@@ -9,7 +9,7 @@ for old_file in glob.glob("*.fits"):
     new = str(i) + ".fits"
     os.renames(old_file, new)
     i=i+1
-<<<<<<< HEAD
+
 	
 	
 import os
@@ -19,7 +19,7 @@ index = 0
 for filename in files:
     os.rename(filename, str(index).zfill(7)+'.png')
     index += 1
-=======
+
     
     
 ## file manipulation
@@ -46,4 +46,3 @@ def clearFilesExcept(self, filetypes = ['.odb','.py','.cae','.stp']):
 def add_path(add_folder = "C:/bin/scripts"):
     import sys
     sys.path.append(add_folder)
->>>>>>> 158c2d9cc94d9605b7e573cfe3d7636d50aec236
