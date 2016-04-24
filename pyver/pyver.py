@@ -109,15 +109,23 @@ def make_win_exe():
     os.system('pip install pyinstaller')
     os.system('pyinstaller pyver.py --onefile')    
 
-def all_files(rootDir = '.'):
+def all_files(rootDir = '.', wildcard='.'):
     #rootDir = '.'
     files = []
     for dirName, subdirList, fileList in os.walk(rootDir):
         for fname in fileList:
             fullpath = os.path.join(dirName, fname)
             if fullpath.split(os.sep)[1] != '.pyver':
-                #print(fullpath)    
-                files.append(fullpath)
+                #print(fullpath)  
+                fileext = os.path.splitext(fullpath)[1]
+                if wildcard == fileext:
+                    files.append(fullpath)
+                    print('%s added %s' % (wildcard,fullpath)) 
+                elif wildcard == '.':
+                    files.append(fullpath)
+                else:
+                    print('extension %s not found or skipping' % (fileext)) 
+					
     return files
 
 def clearFiles(filetypes = ['exe','spec']):
@@ -159,36 +167,33 @@ if __name__=='__main__':
         p = argparse.ArgumentParser()
         p.add_argument('-u', '--user', 
                        default = os.path.split(os.path.expanduser('~'))[-1], 
-                       help='user that made the pyver entry')
+                       help='''user that made the pyver entry''')
         p.add_argument('-f', '--files',
-                       help='''add files separated by vertical line with no  
-                               spaces, example, file1.txt|file2.txt''')
+                       help='''omit to add all files. 
+								add extensions EXAMPLE "*.txt|*.docx"
+								add files separated by vertical line EXAMPLE "file1.txt|file2.txt" ''')
         p.add_argument('-c', '--comment', default = '', 
                        help='''add a comment enclosed in double quotes 
-                               as to what changed.''')
-#        p.add_argument('-e', '--extension', default = '', 
-#                       help='''add an extension to keep all the files''')                               
+                               as to what changed. EXAMPLE "This is my comment" ''')                             
         args = p.parse_args()
         
-
         if args.files:
             # collect all files of a type
             tempfiles = args.files.split('|')
             args.files = []
             for t in tempfiles:
-                if t not in os.listdir(os.getcwd()):
+                if t[0] == '*':	
+                    args.files.extend(all_files('.', t[1:]))
+                elif t not in os.listdir(os.getcwd()):
                     print('%s not found, skipping' % t)
                 else:
                     args.files.append(t)
-                    
-#        elif args.extension:
-#            for e in args.extension:
-#                os.path.splitext(f)[1]
-#                args.files.append(glob.glob('*.'+e))     
+                if '.pyver' in args.files:
+                    args.files.remove('.pyver')
                 
         else:
             #files = os.listdir(os.getcwd())  ## does not capture subdirectories
-            args.files = all_files('.')
+            args.files = all_files('.','.')  # add all files
             if '.pyver' in args.files:
                 args.files.remove('.pyver')
         #user, archivefiles, comment = args.user, args.files, args.comment        

@@ -77,6 +77,11 @@ We also have some flags we can use to customize our commits. This commit adds on
 pyver -f "file1.txt|file2.docx" -c "making a comment for this commit"
 ```
 
+We can also use wildcards to add groups of files rather than listing each individual file. 
+```
+pyver -f "*.txt|*.docx" -c "I added all the txt and docx files to my archive"
+```
+
 I used pyinstaller to build my own windows executable
 ```
 pyinstaller pyver.py --onefile
