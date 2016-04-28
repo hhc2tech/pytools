@@ -4,7 +4,7 @@ Version control for dummies
 """
 
 __author__ = 'Neal Gordon'
-__version__ = '0.2'
+__version__ = '0.3'
 
 import os, shutil, datetime, sys, argparse, glob
 
@@ -37,20 +37,14 @@ def pyver(user, comment, archivefiles):
     print('----files archived----')
     os.mkdir(archivepath)
     for f in archivefiles:
-        if os.path.exists(os.path.dirname(os.path.join(archivepath, f))):
-            try:
-                shutil.copy(f , os.path.join(archivepath, f))
-                print(os.path.join(archivepath, f))
-            except:
-                print('%s copy failed. Is it open?' % os.path.join(archivepath, f))
-        else:
-            os.makedirs(os.path.join(archivepath,os.path.dirname(f)))
-            try:
-                shutil.copy(f , os.path.join(archivepath, f))
-                print(os.path.join(archivepath, f))
-            except:
-                print('%s copy failed. Is it open?' % os.path.join(archivepath, f))
-            #print('directory %s created' % os.path.join(archivepath,os.path.dirname(f)))
+        if not os.path.exists(os.path.dirname(os.path.join(archivepath, f))):
+            os.makedirs(os.path.join(archivepath,os.path.dirname(f)))    
+        try:
+            shutil.copy(f , os.path.join(archivepath, f))       
+            print(os.path.join(archivepath, f))
+        except:
+            print('%s copy failed. Is it open?' % os.path.join(archivepath, f))
+        #print('directory %s created' % os.path.join(archivepath,os.path.dirname(f)))
     archivesize = sum([os.path.getsize(s) for s in os.listdir(archivepath)])/1e3 # kb
     
     ### makes a zip file instead
@@ -110,12 +104,23 @@ def make_win_exe():
     os.system('pyinstaller pyver.py --onefile')    
 
 def all_files(rootDir = '.', wildcard='.'):
+    '''
+    returns all files and directories that do not start with . or ~
+    accepts wildcards in the format *.py   or *.txt
+    '''
     #rootDir = '.'
     files = []
     for dirName, subdirList, fileList in os.walk(rootDir):
         for fname in fileList:
             fullpath = os.path.join(dirName, fname)
-            if fullpath.split(os.sep)[1] != '.pyver':
+            # skip over files and folders that start with . or ~
+            
+            # os.path.splitext(f[-2])[1]      extension
+            #if fullpath.split(os.sep)[1] != '.' and fullpath.split(os.sep)[1] != '~':
+            #os.path.basename(fullpath)[0] != '.'
+            #os.path.basename(fullpath)[0] != '~'            
+            if '.' not in [x[0] for x in fullpath.split(os.sep)[1:]] and \
+               '~' not in [x[0] for x in fullpath.split(os.sep)[1:]]:
                 #print(fullpath)  
                 fileext = os.path.splitext(fullpath)[1]
                 if wildcard == fileext:
@@ -125,7 +130,7 @@ def all_files(rootDir = '.', wildcard='.'):
                     files.append(fullpath)
                 else:
                     print('extension %s not found or skipping' % (fileext)) 
-					
+    files = [x[2:] for x in files] # clear off .\\
     return files
 
 def clearFiles(filetypes = ['exe','spec']):
@@ -188,14 +193,15 @@ if __name__=='__main__':
                     print('%s not found, skipping' % t)
                 else:
                     args.files.append(t)
-                if '.pyver' in args.files:
-                    args.files.remove('.pyver')
+                #if '.pyver' in args.files:
+                #    args.files.remove('.pyver')
                 
         else:
             #files = os.listdir(os.getcwd())  ## does not capture subdirectories
             args.files = all_files('.','.')  # add all files
-            if '.pyver' in args.files:
-                args.files.remove('.pyver')
+            #if '.pyver' in args.files:
+            #    args.files.remove('.pyver')
         #user, archivefiles, comment = args.user, args.files, args.comment        
+        #print(args.files)
         pyver(args.user, args.comment, args.files)      
         
