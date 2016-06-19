@@ -33,15 +33,17 @@ pip install PyPDF2
 import os
 from PyPDF2 import PdfFileReader, PdfFileMerger
 
-files_dir = "D:/Astronautics Structures Manual"
+files_dir = "D:/Mechanical Engineer's Handbook"
 pdf_files = [f for f in os.listdir(files_dir) if f.endswith("pdf")] # glob.glob('*.pdf')
+
+pdf_files.sort()
 
 merger = PdfFileMerger(strict = False)
 
 for filename in pdf_files:
     merger.append(PdfFileReader(os.path.join(files_dir, filename), "rb"), bookmark=filename)
 
-merger.write(os.path.join(files_dir, "Astronautics Structures Manual.pdf"))
+merger.write(os.path.join(files_dir, "Mechanical Engineers Handbook.pdf"))
 
 
 
